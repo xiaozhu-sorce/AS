@@ -18,33 +18,38 @@ public class QuizActivity extends AppCompatActivity {
     private TextView mQuestionTextView;
     private static final String TAG="QuizActivity";
     private static final String KEY_INDEX="index";
+    private static final String KEY_ANSWER="answer";
 
-    private Question[] mQuestionBank =new Question[]{
-            new Question(R.string.question_australia,true),
-            new Question(R.string.question_oceans,true),
-            new Question(R.string.question_mideast,false),
-            new Question(R.string.question_africa,false),
-            new Question(R.string.question_america,true),
-            new Question(R.string.question_asia,true)
+    private Question[] mQuestionBank =new Question[]{     //问题数组
+            new Question(R.string.question_australia,true,0),
+            new Question(R.string.question_oceans,true,0),
+            new Question(R.string.question_mideast,false,0),
+            new Question(R.string.question_africa,false,0),
+            new Question(R.string.question_america,true,0),
+            new Question(R.string.question_asia,true,0)//填充数组，使用构造器
     };
     private int mCurrentIndex=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(TAG,"onStart() called");
-        setContentView(R.layout.activity_quiz);
+        Log.d(TAG,"onCreat() called");
+        setContentView(R.layout.activity_quiz);//实例化组件并将它们放在屏幕上
 
-        if(savedInstanceState!=null){
+        if(savedInstanceState!=null){       //检查存储的Bundle信息
             mCurrentIndex=savedInstanceState.getInt(KEY_INDEX,0);
+            int[] answerList=savedInstanceState.getIntArray(KEY_ANSWER);
+            for (int i=0;i<mQuestionBank.length;i++){
+                mQuestionBank[i].setisAnswe(answerList[i]);
+            }
         }
 
-        mQuestionTextView=(TextView)findViewById(R.id.question_text_view);
-        mQuestionTextView.setOnClickListener(new View.OnClickListener() {
+        mQuestionTextView=(TextView)findViewById(R.id.question_text_view);//引用生成的视图对象，问题数组文字
+        mQuestionTextView.setOnClickListener(new View.OnClickListener() { //设置监听器，使用匿名内部类;
             @Override
             public void onClick(View v) {
                 mCurrentIndex=(mCurrentIndex+1)%mQuestionBank.length;
-                updateQuestion();
+                updateQuestion();//以上行使点击问题也可以更新为下一个问题
             }
         });
 
@@ -69,19 +74,19 @@ public class QuizActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 mCurrentIndex=(mCurrentIndex+1)%mQuestionBank.length;
-                updateQuestion();
+                updateQuestion();//以上两行用于更新为下一个问题
             }
         });
-        updateQuestion();
+        updateQuestion();//起始更新，使页面打开之后有问题存在！
         mPrevButton=(ImageButton)findViewById(R.id.prev_button);
         mPrevButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (mCurrentIndex==0)
-                    mCurrentIndex=mQuestionBank.length-1;
+                    mCurrentIndex=mQuestionBank.length-1;//此条件用于避免刚开始点击prev按钮
                 else
                     mCurrentIndex=(mCurrentIndex-1)%mQuestionBank.length;
-                updateQuestion();
+                updateQuestion();//更新数组
             }
         });
     }
@@ -105,11 +110,18 @@ public class QuizActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle savedInstanceState){
+    protected void onSaveInstanceState(Bundle savedInstanceState){   //覆盖onSaveInstanceState（Bundle）方法，将数据保存在bundle中，然后字啊onCreat（Bundle）中取回这些数据
         super.onSaveInstanceState(savedInstanceState);
-        Log.d(TAG,"onSaveInstanceState");
-        savedInstanceState.putInt(KEY_INDEX,mCurrentIndex);
+        Log.d(TAG,"onSaveInstanceState() called");
+        savedInstanceState.putInt(KEY_INDEX,mCurrentIndex);//设置键-值对
+        int[] answerList=new int[mQuestionBank.length];
+        for (int i=0;i<answerList.length;i++){
+            answerList[i]=mQuestionBank[i].getisAnswer();
+        }
+
+        savedInstanceState.putIntArray(KEY_ANSWER,answerList);
     }
+
     @Override
     protected void onStop(){
         super.onStop();
@@ -123,22 +135,37 @@ public class QuizActivity extends AppCompatActivity {
     }
 
     private void ButtonEnabled(){
-
+        if (mQuestionBank[mCurrentIndex].getisAnswer()!=0){
+            mTrueButton.setEnabled(false);
+            mFalsxeButton.setEnabled(false);
+        }
+        else {
+            mTrueButton.setEnabled(true);
+            mFalsxeButton.setEnabled(true);
+        }
     }
+
     private void updateQuestion(){
-        int question=mQuestionBank[mCurrentIndex].getTextResId();
-        mQuestionTextView.setText(question);
+        int question=mQuestionBank[mCurrentIndex].getTextResId();//获取第几个问题的具体内容
+        mQuestionTextView.setText(question);//设置具体文字？？
+        ButtonEnabled();
     }
 
-    private void checkAnswer(boolean userPressedTrue){
+    private void checkAnswer(boolean userPressedTrue){    //根据用户行为检查
         boolean answerIsTrue=mQuestionBank[mCurrentIndex].isAnswerTrue();
         int messageResId=0;
+
+        ButtonEnabled();
+
         if (userPressedTrue==answerIsTrue){
+            mQuestionBank[mCurrentIndex].setisAnswe(1);
             messageResId=R.string.correct_toast;
         }
         else{
+            mQuestionBank[mCurrentIndex].setisAnswe(-1);
             messageResId=R.string.incorrect_toast;
         }
-        Toast.makeText(this,messageResId,Toast.LENGTH_SHORT).show();
+
+        Toast.makeText(QuizActivity.this,messageResId,Toast.LENGTH_SHORT).show();//创建提示消息，mskeText（Context context，int resID<资源ID>，int duration、）
     }
 }

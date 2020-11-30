@@ -4,6 +4,7 @@ public class Question
 {
     private int mTextResId;
     private boolean mAnswerTrue;
+    private int misAnswer;
 
     public int getTextResId() {
         return mTextResId;
@@ -21,9 +22,18 @@ public class Question
         mAnswerTrue = answerTrue;
     }
 
-    public Question(int textResId, boolean answerTrue)
+    public int getisAnswer(){
+        return misAnswer;
+    }
+
+    public void setisAnswe(int isanswer){
+        misAnswer=isanswer;
+    }
+
+    public Question(int textResId, boolean answerTrue,int isanswer)
     {
         mTextResId=textResId;
         mAnswerTrue=answerTrue;
+        misAnswer=isanswer;
     }
 }
