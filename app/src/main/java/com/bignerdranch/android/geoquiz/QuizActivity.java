@@ -40,7 +40,7 @@ public class QuizActivity extends AppCompatActivity {
             mCurrentIndex=savedInstanceState.getInt(KEY_INDEX,0);
             int[] answerList=savedInstanceState.getIntArray(KEY_ANSWER);
             for (int i=0;i<mQuestionBank.length;i++){
-                mQuestionBank[i].setisAnswe(answerList[i]);
+                mQuestionBank[i].setisAnswer(answerList[i]);
             }
         }
 
@@ -49,7 +49,7 @@ public class QuizActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 mCurrentIndex=(mCurrentIndex+1)%mQuestionBank.length;
-                updateQuestion();//以上行使点击问题也可以更新为下一个问题
+                updateQuestion();//以上两行使点击问题也可以更新为下一个问题
             }
         });
 
@@ -69,6 +69,8 @@ public class QuizActivity extends AppCompatActivity {
             }
         });
 
+        updateQuestion();//起始更新，使页面打开之后有问题存在！
+
         mNextButton=(ImageButton)findViewById(R.id.next_button);
         mNextButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -77,13 +79,13 @@ public class QuizActivity extends AppCompatActivity {
                 updateQuestion();//以上两行用于更新为下一个问题
             }
         });
-        updateQuestion();//起始更新，使页面打开之后有问题存在！
+
         mPrevButton=(ImageButton)findViewById(R.id.prev_button);
         mPrevButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (mCurrentIndex==0)
-                    mCurrentIndex=mQuestionBank.length-1;//此条件用于避免刚开始点击prev按钮
+                    mCurrentIndex=mQuestionBank.length-1;//此条件用于避免刚开始点击prev按钮而无法返回到最后一个问题
                 else
                     mCurrentIndex=(mCurrentIndex-1)%mQuestionBank.length;
                 updateQuestion();//更新数组
@@ -136,18 +138,18 @@ public class QuizActivity extends AppCompatActivity {
 
     private void ButtonEnabled(){
         if (mQuestionBank[mCurrentIndex].getisAnswer()!=0){
-            mTrueButton.setEnabled(false);
+            mTrueButton.setEnabled(false);//setEnabled(false)为禁用掉按钮的id
             mFalsxeButton.setEnabled(false);
         }
         else {
-            mTrueButton.setEnabled(true);
+            mTrueButton.setEnabled(true);//setEnabled(true)为恢复按钮的id
             mFalsxeButton.setEnabled(true);
         }
     }
 
     private void updateQuestion(){
         int question=mQuestionBank[mCurrentIndex].getTextResId();//获取第几个问题的具体内容
-        mQuestionTextView.setText(question);//设置具体文字？？
+        mQuestionTextView.setText(question);//设置具体问题？？
         ButtonEnabled();
     }
 
@@ -155,17 +157,17 @@ public class QuizActivity extends AppCompatActivity {
         boolean answerIsTrue=mQuestionBank[mCurrentIndex].isAnswerTrue();
         int messageResId=0;
 
-        ButtonEnabled();
-
         if (userPressedTrue==answerIsTrue){
-            mQuestionBank[mCurrentIndex].setisAnswe(1);
+            mQuestionBank[mCurrentIndex].setisAnswer(1);
             messageResId=R.string.correct_toast;
         }
         else{
-            mQuestionBank[mCurrentIndex].setisAnswe(-1);
+            mQuestionBank[mCurrentIndex].setisAnswer(-1);
             messageResId=R.string.incorrect_toast;
         }
 
         Toast.makeText(QuizActivity.this,messageResId,Toast.LENGTH_SHORT).show();//创建提示消息，mskeText（Context context，int resID<资源ID>，int duration、）
+
+        ButtonEnabled();//根据isanswer的具体值更新按钮的状态
     }
 }

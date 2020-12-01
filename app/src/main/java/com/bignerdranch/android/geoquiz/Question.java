@@ -26,7 +26,7 @@ public class Question
         return misAnswer;
     }
 
-    public void setisAnswe(int isanswer){
+    public void setisAnswer(int isanswer){
         misAnswer=isanswer;
     }
 
