@@ -19,6 +19,8 @@ public class QuizActivity extends AppCompatActivity {
     private static final String TAG="QuizActivity";
     private static final String KEY_INDEX="index";
     private static final String KEY_ANSWER="answer";
+    private double correctAnswer=0;
+    private double answerLength=0;
 
     private Question[] mQuestionBank =new Question[]{     //问题数组
             new Question(R.string.question_australia,true,0),
@@ -77,6 +79,12 @@ public class QuizActivity extends AppCompatActivity {
             public void onClick(View v) {
                 mCurrentIndex=(mCurrentIndex+1)%mQuestionBank.length;
                 updateQuestion();//以上两行用于更新为下一个问题
+                answerLength++;
+                if (answerLength==mQuestionBank.length){//当answerLength长度和问题数量长度一致的时候进行输出
+                    double i=correctAnswer/mQuestionBank.length;
+                    double sorce=i*100;
+                    Toast.makeText(QuizActivity.this,"sorce"+sorce,Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -160,6 +168,7 @@ public class QuizActivity extends AppCompatActivity {
         if (userPressedTrue==answerIsTrue){
             mQuestionBank[mCurrentIndex].setisAnswer(1);
             messageResId=R.string.correct_toast;
+            correctAnswer++;
         }
         else{
             mQuestionBank[mCurrentIndex].setisAnswer(-1);
