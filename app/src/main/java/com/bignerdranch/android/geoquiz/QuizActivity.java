@@ -83,7 +83,7 @@ public class QuizActivity extends AppCompatActivity {
                 if (answerLength==mQuestionBank.length){//当answerLength长度和问题数量长度一致的时候进行输出
                     double i=correctAnswer/mQuestionBank.length;
                     double sorce=i*100;
-                    Toast.makeText(QuizActivity.this,"sorce"+sorce,Toast.LENGTH_SHORT).show();
+                    Toast.makeText(QuizActivity.this,"评分"+sorce+"%",Toast.LENGTH_SHORT).show();
                 }
             }
         });
