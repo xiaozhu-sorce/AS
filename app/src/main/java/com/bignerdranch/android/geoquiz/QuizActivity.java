@@ -40,7 +40,7 @@ public class QuizActivity extends AppCompatActivity {
         setContentView(R.layout.activity_quiz);//实例化组件并将它们放在屏幕上
 
         if(savedInstanceState!=null){       //检查存储的Bundle信息
-            mCurrentIndex=savedInstanceState.getInt(KEY_INDEX,0);
+            mCurrentIndex=savedInstanceState.getInt(KEY_INDEX,0);//键值结构
             int[] answerList=savedInstanceState.getIntArray(KEY_ANSWER);
             for (int i=0;i<mQuestionBank.length;i++){
                 mQuestionBank[i].setisAnswer(answerList[i]);
@@ -77,7 +77,8 @@ public class QuizActivity extends AppCompatActivity {
         mCheatButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent =new Intent(QuizActivity.this,CheatActivity.class);
+                boolean answerIsTrue=mQuestionBank[mCurrentIndex].isAnswerTrue();//获得每个问题的答案
+                Intent intent =CheatActivity.newIntent(QuizActivity.this,answerIsTrue);//通过CheatActivity的newIntent方法
                 startActivity(intent);
             }
         });
@@ -135,7 +136,7 @@ public class QuizActivity extends AppCompatActivity {
         savedInstanceState.putInt(KEY_INDEX,mCurrentIndex);//设置键-值对
         int[] answerList=new int[mQuestionBank.length];
         for (int i=0;i<answerList.length;i++){
-            answerList[i]=mQuestionBank[i].getisAnswer();
+            answerList[i]=mQuestionBank[i].getisAnswer();//获得每道题的答案
         }
 
         savedInstanceState.putIntArray(KEY_ANSWER,answerList);
@@ -171,7 +172,7 @@ public class QuizActivity extends AppCompatActivity {
     }
 
     private void checkAnswer(boolean userPressedTrue){    //根据用户行为检查
-        boolean answerIsTrue=mQuestionBank[mCurrentIndex].isAnswerTrue();
+        boolean answerIsTrue=mQuestionBank[mCurrentIndex].isAnswerTrue();//通过isAnswertrue方法来获得问题的正确答案，answertrue是question构造器中的设置的问题答案的变量;
         int messageResId=0;
 
         if (userPressedTrue==answerIsTrue){
