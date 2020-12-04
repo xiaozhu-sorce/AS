@@ -1,7 +1,6 @@
 package com.bignerdranch.android.geoquiz;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -118,15 +117,16 @@ public class QuizActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onActivityResult(int reuquestCode,int resultCode,Intent data){
-        if (resultCode!= Activity.RESULT_OK){
+    protected void onActivityResult(int reuquestCode,int resultCode,Intent data) {
+        super.onActivityResult(reuquestCode, resultCode, data);
+        if (resultCode != Activity.RESULT_OK) {
             return;
         }
-        if (reuquestCode==REQUEST_CODE_CHEAT){
-            if (data==null){
+        if (reuquestCode == REQUEST_CODE_CHEAT) {
+            if (data == null) {
                 return;
             }
-            mIsCheater=CheatActivity.wasAnswerShown(data);
+            mIsCheater = CheatActivity.wasAnswerShown(data);
         }
     }
 
