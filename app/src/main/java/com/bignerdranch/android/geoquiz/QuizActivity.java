@@ -1,5 +1,7 @@
 package com.bignerdranch.android.geoquiz;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -22,6 +24,7 @@ public class QuizActivity extends AppCompatActivity {
     private static final String KEY_ANSWER="answer";
     private double correctAnswer=0;
     private double answerLength=0;
+    private static final int REQUEST_CODE_CHEAT=0;
 
     private Question[] mQuestionBank =new Question[]{     //问题数组
             new Question(R.string.question_australia,true,0),
@@ -32,6 +35,7 @@ public class QuizActivity extends AppCompatActivity {
             new Question(R.string.question_asia,true,0)//填充数组，使用构造器
     };
     private int mCurrentIndex=0;
+    private boolean mIsCheater;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,7 +83,8 @@ public class QuizActivity extends AppCompatActivity {
             public void onClick(View v) {
                 boolean answerIsTrue=mQuestionBank[mCurrentIndex].isAnswerTrue();//获得每个问题的答案
                 Intent intent =CheatActivity.newIntent(QuizActivity.this,answerIsTrue);//通过CheatActivity的newIntent方法
-                startActivity(intent);
+                startActivityForResult(intent,REQUEST_CODE_CHEAT);//第一个参数intent用于决定启动哪个activity
+                // 第二个参数是请求代码，请求代码是先发送给子activity，然后在返回给父activity的整数值，由用户定义。
             }
         });
 
@@ -88,6 +93,7 @@ public class QuizActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 mCurrentIndex=(mCurrentIndex+1)%mQuestionBank.length;
+                mIsCheater=false;
                 updateQuestion();//以上两行用于更新为下一个问题
                 answerLength++;
                 if (answerLength==mQuestionBank.length){//当answerLength长度和问题数量长度一致的时候进行输出
@@ -112,6 +118,19 @@ public class QuizActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onActivityResult(int reuquestCode,int resultCode,Intent data){
+        if (resultCode!= Activity.RESULT_OK){
+            return;
+        }
+        if (reuquestCode==REQUEST_CODE_CHEAT){
+            if (data==null){
+                return;
+            }
+            mIsCheater=CheatActivity.wasAnswerShown(data);
+        }
+    }
+
+    @Override
     protected void onStart(){
         super.onStart();
         Log.d(TAG,"onStart()  called");
@@ -130,7 +149,8 @@ public class QuizActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle savedInstanceState){   //覆盖onSaveInstanceState（Bundle）方法，将数据保存在bundle中，然后字啊onCreat（Bundle）中取回这些数据
+    protected void onSaveInstanceState(Bundle savedInstanceState){
+        //覆盖onSaveInstanceState（Bundle）方法，将数据保存在bundle中，然后字啊onCreat（Bundle）中取回这些数据
         super.onSaveInstanceState(savedInstanceState);
         Log.d(TAG,"onSaveInstanceState() called");
         savedInstanceState.putInt(KEY_INDEX,mCurrentIndex);//设置键-值对
@@ -172,20 +192,26 @@ public class QuizActivity extends AppCompatActivity {
     }
 
     private void checkAnswer(boolean userPressedTrue){    //根据用户行为检查
-        boolean answerIsTrue=mQuestionBank[mCurrentIndex].isAnswerTrue();//通过isAnswertrue方法来获得问题的正确答案，answertrue是question构造器中的设置的问题答案的变量;
+        boolean answerIsTrue=mQuestionBank[mCurrentIndex].isAnswerTrue();
+        //通过isAnswertrue方法来获得问题的正确答案，answerIstrue是question构造器中的设置的问题答案的变量;
         int messageResId=0;
 
-        if (userPressedTrue==answerIsTrue){
-            mQuestionBank[mCurrentIndex].setisAnswer(1);
-            messageResId=R.string.correct_toast;
-            correctAnswer++;
-        }
-        else{
-            mQuestionBank[mCurrentIndex].setisAnswer(-1);
-            messageResId=R.string.incorrect_toast;
+        if (mIsCheater){
+            messageResId=R.string.judgement_toast;
+        }else {
+            if (userPressedTrue==answerIsTrue){
+                mQuestionBank[mCurrentIndex].setisAnswer(1);
+                messageResId=R.string.correct_toast;
+                correctAnswer++;
+            }
+            else{
+                mQuestionBank[mCurrentIndex].setisAnswer(-1);
+                messageResId=R.string.incorrect_toast;
+            }
         }
 
-        Toast.makeText(QuizActivity.this,messageResId,Toast.LENGTH_SHORT).show();//创建提示消息，mskeText（Context context，int resID<资源ID>，int duration、）
+        Toast.makeText(QuizActivity.this,messageResId,Toast.LENGTH_SHORT).show();
+        //创建提示消息，mskeText（Context context，int resID<资源ID>，int duration、）
 
         ButtonEnabled();//根据isanswer的具体值更新按钮的状态
     }
