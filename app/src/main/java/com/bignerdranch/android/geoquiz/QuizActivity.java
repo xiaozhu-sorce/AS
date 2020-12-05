@@ -24,7 +24,6 @@ public class QuizActivity extends AppCompatActivity {
     private double correctAnswer=0;
     private double answerLength=0;
     private static final int REQUEST_CODE_CHEAT=0;
-
     private Question[] mQuestionBank =new Question[]{     //问题数组
             new Question(R.string.question_australia,true,0),
             new Question(R.string.question_oceans,true,0),
@@ -118,6 +117,7 @@ public class QuizActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int reuquestCode,int resultCode,Intent data) {
+        //父Activity调用onActivityResult()方法接收子activity返回的数据
         super.onActivityResult(reuquestCode, resultCode, data);
         if (resultCode != Activity.RESULT_OK) {
             return;
@@ -150,15 +150,14 @@ public class QuizActivity extends AppCompatActivity {
 
     @Override
     protected void onSaveInstanceState(Bundle savedInstanceState){
-        //覆盖onSaveInstanceState（Bundle）方法，将数据保存在bundle中，然后字啊onCreat（Bundle）中取回这些数据
+        //覆盖onSaveInstanceState（Bundle）方法，将数据保存在bundle中，然后在onCreat（Bundle）中取回这些数据
         super.onSaveInstanceState(savedInstanceState);
         Log.d(TAG,"onSaveInstanceState() called");
         savedInstanceState.putInt(KEY_INDEX,mCurrentIndex);//设置键-值对
-        int[] answerList=new int[mQuestionBank.length];
+        int[] answerList=new int[mQuestionBank.length];//设置答案数组的个数
         for (int i=0;i<answerList.length;i++){
-            answerList[i]=mQuestionBank[i].getisAnswer();//获得每道题的答案
+            answerList[i]=mQuestionBank[i].getisAnswer();//获得每道题的用户的答案
         }
-
         savedInstanceState.putIntArray(KEY_ANSWER,answerList);
     }
 
