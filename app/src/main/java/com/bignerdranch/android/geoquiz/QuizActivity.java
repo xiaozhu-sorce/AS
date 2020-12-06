@@ -33,9 +33,8 @@ public class QuizActivity extends AppCompatActivity {
             new Question(R.string.question_asia,true,0)//填充数组，使用构造器
     };
     private int mCurrentIndex=0;
-    private boolean[] mIsCheater=new boolean[mQuestionBank.length];
+    private boolean mIsCheater;
     private static final String SECOND_BUG="Second Bug";
-    private static final String THIRD_BUG="Third Bug";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +48,7 @@ public class QuizActivity extends AppCompatActivity {
             for (int i=0;i<mQuestionBank.length;i++){
                 mQuestionBank[i].setisAnswer(answerList[i]);//把保存在answerList里面的值赋值给mQuestionBank
             }
-            mIsCheater[mCurrentIndex]=savedInstanceState.getBoolean(SECOND_BUG,false);//防止旋转作弊漏洞
+            mIsCheater=savedInstanceState.getBoolean(SECOND_BUG,false);//防止旋转作弊漏洞
         }
 
         mQuestionTextView=(TextView)findViewById(R.id.question_text_view);//引用生成的视图对象，问题数组文字
@@ -94,7 +93,7 @@ public class QuizActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 mCurrentIndex=(mCurrentIndex+1)%mQuestionBank.length;
-                mIsCheater[mCurrentIndex]=false;
+                mIsCheater=false;
                 updateQuestion();//以上两行用于更新为下一个问题
                 answerLength++;
                 if (answerLength==mQuestionBank.length){//当answerLength长度和问题数量长度一致的时候进行输出
@@ -129,7 +128,7 @@ public class QuizActivity extends AppCompatActivity {
             if (data == null) {
                 return;
             }
-            mIsCheater[mCurrentIndex] = CheatActivity.wasAnswerShown(data);
+            mIsCheater = CheatActivity.wasAnswerShown(data);
         }
     }
 
@@ -162,7 +161,7 @@ public class QuizActivity extends AppCompatActivity {
             answerList[i]=mQuestionBank[i].getisAnswer();//获得每道题的用户的答案
         }
         savedInstanceState.putIntArray(KEY_ANSWER,answerList);
-        savedInstanceState.putBooleanArray(THIRD_BUG,mIsCheater);
+        savedInstanceState.putBoolean(SECOND_BUG,mIsCheater);
     }
 
     @Override
@@ -199,7 +198,7 @@ public class QuizActivity extends AppCompatActivity {
         //通过isAnswertrue方法来获得问题的正确答案，answerIstrue是question构造器中的设置的问题答案的变量;
         int messageResId=0;
 
-        if (mIsCheater[mCurrentIndex]){
+        if (mIsCheater){
             messageResId=R.string.judgement_toast;
         }else {
             if (userPressedTrue==answerIsTrue){
