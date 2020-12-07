@@ -17,6 +17,8 @@ import androidx.appcompat.app.AppCompatActivity;
 public class CheatActivity extends AppCompatActivity {
     private static final String EXTRA_ANSWER_IS_TRUE = "com.bignerdranch.android.geoquiz.answer_is_true";
     private static final String EXTRA_ANSWER_SHOWN = "com.bignerdranch.android.geoquiz.answer_shown";
+    private static final String EXTRA_CHEAT_NUMS="com.bignerdranch.android.geoquiz.cheat_nums";
+    private static int Cheat_Nums=3;
     private boolean mAnswerIsTrue;
     private TextView mAnswerTextView;
     private Button mShowAnswerButton;
@@ -26,6 +28,13 @@ public class CheatActivity extends AppCompatActivity {
         Intent intent = new Intent(packageContext, CheatActivity.class);
         intent.putExtra(EXTRA_ANSWER_IS_TRUE, answerIsTrue);
         return intent;
+    }
+
+    private void setAnswerShowResult(boolean isAnswerShown) {
+        Intent data = new Intent();
+        data.putExtra(EXTRA_ANSWER_SHOWN, isAnswerShown);
+        data.putExtra(EXTRA_CHEAT_NUMS,Cheat_Nums);//作弊次数传回去
+        setResult(RESULT_OK, data);
     }
 
     public static boolean wasAnswerShown(Intent result)
@@ -38,6 +47,7 @@ public class CheatActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cheat);
         mAnswerIsTrue = getIntent().getBooleanExtra(EXTRA_ANSWER_IS_TRUE, false);
+        Cheat_Nums=getIntent().getIntExtra(EXTRA_CHEAT_NUMS,3);//获取quizactivity传过来的数据
         mAnswerTextView = (TextView) findViewById(R.id.answer_text_view);
 
         mShowAnswerButton=(Button) findViewById(R.id.show_answer_button);
@@ -50,6 +60,7 @@ public class CheatActivity extends AppCompatActivity {
                 } else {
                     mAnswerTextView.setText(R.string.false_button);
                 }
+                Cheat_Nums--;
                 setAnswerShowResult(true);
                 if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){//Build.VERSION.SDK_INT常量代表了Android设备的版本号。
                     int cx = mShowAnswerButton.getWidth()/2;
@@ -67,7 +78,7 @@ public class CheatActivity extends AppCompatActivity {
                     anim.start();
                 } else{
                     mShowAnswerButton.setVisibility(View.INVISIBLE);
-                }
+                }//if语句设置了一个动画效果
             }
         });
         if (savedInstanceState!=null){
@@ -83,9 +94,4 @@ public class CheatActivity extends AppCompatActivity {
         savedInstanceState.putBoolean(FIRST_BUG,mAnswerIsTrue);
     }
 
-    private void setAnswerShowResult(boolean isAnswerShown) {
-        Intent data = new Intent();
-        data.putExtra(EXTRA_ANSWER_SHOWN, isAnswerShown);
-        setResult(RESULT_OK, data);
-    }
 }

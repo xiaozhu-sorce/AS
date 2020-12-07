@@ -18,6 +18,7 @@ public class QuizActivity extends AppCompatActivity {
     private Button mPrevButton;
     private Button mCheatButton;
     private TextView mQuestionTextView;
+    private TextView mCheatNumsTextView;
     private static final String TAG="QuizActivity";
     private static final String KEY_INDEX="index";
     private static final String KEY_ANSWER="answer";
@@ -35,6 +36,8 @@ public class QuizActivity extends AppCompatActivity {
     private int mCurrentIndex=0;
     private boolean mIsCheater;
     private static final String SECOND_BUG="Second Bug";
+    private static int Cheat_Nums=3;
+    private static final String EXTRA_CHEAT_NUMS="com.bignerdranch.android.geoquiz.cheat_nums";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,10 +86,13 @@ public class QuizActivity extends AppCompatActivity {
             public void onClick(View v) {
                 boolean answerIsTrue=mQuestionBank[mCurrentIndex].isAnswerTrue();//获得每个问题的答案
                 Intent intent =CheatActivity.newIntent(QuizActivity.this,answerIsTrue);//通过CheatActivity的newIntent方法
+                intent.putExtra(EXTRA_CHEAT_NUMS,Cheat_Nums);
                 startActivityForResult(intent,REQUEST_CODE_CHEAT);//第一个参数intent用于决定启动哪个activity
                 // 第二个参数是请求代码，请求代码是先发送给子activity，然后在返回给父activity的整数值，由用户定义。
             }
         });
+
+        mCheatNumsTextView=(TextView)findViewById(R.id.cheat_nums);
 
         mNextButton=(Button)findViewById(R.id.next_button);
         mNextButton.setOnClickListener(new View.OnClickListener() {
@@ -129,6 +135,7 @@ public class QuizActivity extends AppCompatActivity {
                 return;
             }
             mIsCheater = CheatActivity.wasAnswerShown(data);
+            Cheat_Nums=data.getIntExtra(EXTRA_CHEAT_NUMS,0);
         }
     }
 
@@ -136,6 +143,10 @@ public class QuizActivity extends AppCompatActivity {
     protected void onStart(){
         super.onStart();
         Log.d(TAG,"onStart()  called");
+        if (Cheat_Nums==0){
+            mCheatButton.setEnabled(false);
+        }
+        mCheatNumsTextView.setText("Remaining number of cheating:"+Cheat_Nums);
     }
 
     @Override
