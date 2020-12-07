@@ -1,7 +1,7 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion 30 //SDK编译版本设置
     buildToolsVersion "30.0.2"
     defaultConfig {
         applicationId "com.bignerdranch.android.geoquiz"
