@@ -51,19 +51,23 @@ public class CheatActivity extends AppCompatActivity {
                     mAnswerTextView.setText(R.string.false_button);
                 }
                 setAnswerShowResult(true);
-                int cx = mShowAnswerButton.getWidth()/2;
-                int cy = mShowAnswerButton.getHeight()/2;
-                float radius = mShowAnswerButton.getWidth();
-                Animator anim = ViewAnimationUtils
-                        .createCircularReveal(mShowAnswerButton,cx,cy,radius,0);
-                anim.addListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation){
-                        super.onAnimationEnd(animation);
-                        mShowAnswerButton.setVisibility(View.INVISIBLE);
-                    }
-                });
-                        anim.start();
+                if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){//Build.VERSION.SDK_INT常量代表了Android设备的版本号。
+                    int cx = mShowAnswerButton.getWidth()/2;
+                    int cy = mShowAnswerButton.getHeight()/2;
+                    float radius = mShowAnswerButton.getWidth();
+                    Animator anim = ViewAnimationUtils.createCircularReveal(mShowAnswerButton,cx,cy,radius,0);
+                    //1>首先指定现实或隐藏的View 2>动画的中心位置 3>起始半径 4>结束半径
+                    anim.addListener(new AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationEnd(Animator animation){
+                            super.onAnimationEnd(animation);
+                            mShowAnswerButton.setVisibility(View.INVISIBLE);
+                        }
+                    });
+                    anim.start();
+                } else{
+                    mShowAnswerButton.setVisibility(View.INVISIBLE);
+                }
             }
         });
         if (savedInstanceState!=null){
