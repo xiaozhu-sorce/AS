@@ -56,6 +56,9 @@ public class QuizActivity extends AppCompatActivity {
 
         mQuestionTextView=(TextView)findViewById(R.id.question_text_view);//引用生成的视图对象，问题数组文字
         mQuestionTextView.setOnClickListener(new View.OnClickListener() { //设置监听器，使用匿名内部类;
+            //setOnclickListener(OnclickListener onClickListener)是View类中的一个监听器，注意此处的参数是View类中的一个接口
+            // 这里看上去是在setOnClickListener方法参数列表里new了一个接口，这么写实际上相当于new了一个实现了OnclickLitener接口的匿名内部类
+            // 然后在这个匿名内部类中重写接口中申明的onClick（View v）方法。
             @Override
             public void onClick(View v) {
                 mCurrentIndex=(mCurrentIndex+1)%mQuestionBank.length;

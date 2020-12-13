@@ -34,10 +34,10 @@ public class CheatActivity extends AppCompatActivity {
         Intent data = new Intent();
         data.putExtra(EXTRA_ANSWER_SHOWN, isAnswerShown);
         data.putExtra(EXTRA_CHEAT_NUMS,Cheat_Nums);//作弊次数传回去
-        setResult(RESULT_OK, data);
+        setResult(RESULT_OK, data);//将CheatActivity结果传回到QuizActivity
     }
 
-    public static boolean wasAnswerShown(Intent result)
+    public static boolean wasAnswerShown(Intent result)//父类中调用
     {
         return result.getBooleanExtra(EXTRA_ANSWER_SHOWN,false);
     }
